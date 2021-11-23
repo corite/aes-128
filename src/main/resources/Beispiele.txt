@@ -1,0 +1,71 @@
+Ein paar Beispiele
+
+Rundenschlüssel:
+2b 7e 15 16 28 ae d2 a6 ab f7 15 88 09 cf 4f 3c
+a0 fa fe 17 88 54 2c b1 23 a3 39 39 2a 6c 76 05
+f2 c2 95 f2 7a 96 b9 43 59 35 80 7a 73 59 f6 7f
+3d 80 47 7d 47 16 fe 3e 1e 23 7e 44 6d 7a 88 3b
+ef 44 a5 41 a8 52 5b 7f b6 71 25 3b db 0b ad 00
+d4 d1 c6 f8 7c 83 9d 87 ca f2 b8 bc 11 f9 15 bc
+6d 88 a3 7a 11 0b 3e fd db f9 86 41 ca 00 93 fd
+4e 54 f7 0e 5f 5f c9 f3 84 a6 4f b2 4e a6 dc 4f
+ea d2 73 21 b5 8d ba d2 31 2b f5 60 7f 8d 29 2f
+ac 77 66 f3 19 fa dc 21 28 d1 29 41 57 5c 00 6e
+d0 14 f9 a8 c9 ee 25 89 e1 3f 0c c8 b6 63 0c a6
+
+(Alle folgenden mit gleichem obigen Schlüssel verschlüsselt)
+
+Text 0: 	5c f6 ee 79 2c df 05 e1 ba 2b 63 25 c4 1a 5f 10
+Verschlüsselt:  e2 48 89 ba aa dd 90 6b 06 30 06 59 8b 8c e4 59
+Text 1: 	e7 e4 59 fa a1 11 b3 37 aa 52 18 59 5c 3b dc 8d
+Verschlüsselt:  02 0b 3c 68 63 35 f1 e4 fb cf dc 9d 34 aa ef e5
+Text 2: 	31 7a ae 07 69 ad ab 88 4c ba 8f 80 c5 4c 6d 26
+Verschlüsselt:  38 37 7a 70 42 79 10 88 0d 7f 5c dd 56 58 9a dd
+Text 3: 	5b 46 c2 cd fc ee 6e 32 34 8b 12 be a7 59 82 30
+Verschlüsselt:  41 81 29 76 8f 10 86 11 74 ac fd dc 2c b3 32 18
+Text 4:		b0 c2 64 64 c9 d9 c9 9a e1 47 73 ee 81 48 54 28
+Verschlüsselt:  16 e6 eb 08 a1 57 16 91 f2 09 15 a5 12 85 e0 54
+Text 5: 	e6 03 ab 0c 92 09 8e bf 08 f9 0b fc ea 33 ff 98
+Verschlüsselt:  96 ef d8 2c 21 14 fc c2 00 b2 d9 8a fa 01 32 82
+Text 6: 	f6 47 68 70 59 11 aa 73 b6 6c 27 10 c5 33 50 d6
+Verschlüsselt:  a5 ae e6 06 38 57 59 0e 0e a7 21 d4 35 9f c4 94
+Text 7: 	a1 f8 d4 88 68 c3 52 7c be 63 c5 23 a3 09 27 41
+Verschlüsselt:  96 08 39 d5 fe 56 03 f7 b5 69 08 8c 34 72 ce fb
+Text 8: 	56 8f 61 aa 34 3c 2e 1b ca 02 84 6d e6 6a 0a a4
+Verschlüsselt:  26 54 8f 77 07 08 42 68 3e 4e 9a 28 50 cd 18 37
+Text 9: 	6f 4a 03 da 95 27 39 dc e1 6a 0a 1d 85 1f 27 73
+Verschlüsselt:  b4 7b 46 e5 f1 30 32 e5 cd 9a 60 cd 67 d1 73 3b
+
+Neue Rundenschlüssel:
+00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f
+d6 aa 74 fd d2 af 72 fa da a6 78 f1 d6 ab 76 fe
+b6 92 cf 0b 64 3d bd f1 be 9b c5 00 68 30 b3 fe
+b6 ff 74 4e d2 c2 c9 bf 6c 59 0c bf 04 69 bf 41
+47 f7 f7 bc 95 35 3e 03 f9 6c 32 bc fd 05 8d fd
+3c aa a3 e8 a9 9f 9d eb 50 f3 af 57 ad f6 22 aa
+5e 39 0f 7d f7 a6 92 96 a7 55 3d c1 0a a3 1f 6b
+14 f9 70 1a e3 5f e2 8c 44 0a df 4d 4e a9 c0 26
+47 43 87 35 a4 1c 65 b9 e0 16 ba f4 ae bf 7a d2
+54 99 32 d1 f0 85 57 68 10 93 ed 9c be 2c 97 4e
+13 11 1d 7f e3 94 4a 17 f3 07 a7 8b 4d 2b 30 c5
+
+Text 0: 	5c f6 ee 79 2c df 05 e1 ba 2b 63 25 c4 1a 5f 10
+Verschlüsselt:  1e 57 d2 78 7b 62 bc d0 23 63 85 e9 8e 36 27 7f
+Text 1: 	e7 e4 59 fa a1 11 b3 37 aa 52 18 59 5c 3b dc 8d
+Verschlüsselt:  fa d8 da 74 09 95 e6 21 9e 9c d2 f1 c7 81 0a 58
+Text 2: 	31 7a ae 07 69 ad ab 88 4c ba 8f 80 c5 4c 6d 26
+Verschlüsselt:  ce a9 f2 c7 dd a1 1c 40 b6 a1 12 93 37 d3 57 1a
+Text 3: 	5b 46 c2 cd fc ee 6e 32 34 8b 12 be a7 59 82 30
+Verschlüsselt:  79 4b 14 b3 d7 3b f6 6e 2a a6 60 72 23 53 5b 96
+Text 4: 	b0 c2 64 64 c9 d9 c9 9a e1 47 73 ee 81 48 54 28
+Verschlüsselt:  47 a2 fe ed 7f dd d6 f1 1a cc a0 49 27 da 05 5c
+Text 5: 	e6 03 ab 0c 92 09 8e bf 08 f9 0b fc ea 33 ff 98
+Verschlüsselt:  04 3e 01 bd 61 11 71 0e 3d 54 41 d7 3f 54 46 4b
+Text 6: 	f6 47 68 70 59 11 aa 73 b6 6c 27 10 c5 33 50 d6
+Verschlüsselt:  40 90 a0 f8 b4 53 67 f0 bd e3 4c f3 5b 98 25 ed
+Text 7: 	a1 f8 d4 88 68 c3 52 7c be 63 c5 23 a3 09 27 41
+Verschlüsselt:  08 ce 2f 4c 2f d0 cc c2 e7 95 d4 d1 2a e6 1d ca
+Text 8: 	56 8f 61 aa 34 3c 2e 1b ca 02 84 6d e6 6a 0a a4
+Verschlüsselt:  83 b1 1b 68 bb fd cb e7 0c c2 15 36 02 68 c2 ee
+Text 9: 	6f 4a 03 da 95 27 39 dc e1 6a 0a 1d 85 1f 27 73
+Verschlüsselt:  e8 9f cf d8 4d 37 5a de 8a cf 0a 75 b3 65 2a 78
