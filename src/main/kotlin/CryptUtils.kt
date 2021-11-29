@@ -15,16 +15,17 @@ class CryptUtils {
         val matrix:Array<IntArray> = Array(4){ IntArray(4) }
         for (i in text.indices) {
             matrix[i%4][i/4] = text[i]
+            //matrix column by column
         }
         return matrix
     }
+
     fun readSBox(filename:String):Array<IntArray>{
         val matrix:Array<IntArray> = Array(16){ IntArray(16) }
         val lines = File(filename).readLines(Charsets.US_ASCII)
         for (i in lines.indices) {
             val hexValues = lines[i].split(", ").map { it.substring(2) }.map { it.toInt(16) }
             matrix[i] = hexValues.toIntArray()
-
         }
         return matrix
     }
@@ -65,7 +66,8 @@ class CryptUtils {
         var t = a shl 1
 
         if ("80".toInt(16) and a != 0){
-           t = t xor "1b".toInt(16)
+            //check if the highest order bit is set
+            t = t xor "1b".toInt(16)
         }
 
         return t and "FF".toInt(16)
@@ -83,12 +85,10 @@ class CryptUtils {
 
     private fun matrixMultiply(vector:IntArray, matrix:Array<IntArray>):IntArray {
         val resultVector = IntArray(matrix.size)
-        //todo: not sure if this works
         for(i in matrix.indices) {
-            resultVector[i] = (multiply(matrix[i][0],vector[0]) xor multiply(matrix[i][1],vector[1])) xor (multiply(matrix[i][2],vector[2]) xor multiply(matrix[i][3],vector[3]))
-            //for (j in matrix.indices) {
-              //  resultVector[i] = resultVector[i] xor multiply(matrix[i][j], vector[i])
-            //}
+            for (j in matrix.indices) {
+                resultVector[i] = resultVector[i] xor multiply(matrix[i][j], vector[j])
+            }
         }
         return resultVector
     }
@@ -106,13 +106,7 @@ class CryptUtils {
             aNum = aNum shr 1
 
         }
-
         return sum
-    }
-
-
-    fun getMatrixAsHexString(matrix: Array<IntArray>):String {
-        return getMatrixAsIntArray(matrix).joinToString("") { padHex(it.toString(16), 2) }
     }
 
     fun getMatrixAsIntArray(matrix: Array<IntArray>):IntArray {
@@ -146,6 +140,7 @@ class CryptUtils {
 
         val wordArrays = chunkText(w,4)
         for (i in wordArrays.indices) {
+            //convert words to bytes
             val keyAsBytes = mutableListOf<Int>()
             for (word in wordArrays[i]) {
                 keyAsBytes.addAll(getBytes(word).toMutableList())
@@ -214,6 +209,4 @@ class CryptUtils {
 
         return list.toTypedArray()
     }
-
-
 }
