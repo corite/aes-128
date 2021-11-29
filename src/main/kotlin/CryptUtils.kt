@@ -2,6 +2,7 @@ import java.io.File
 import java.util.*
 
 class CryptUtils {
+    private val sBox = readSBox(filePrefix+"SBox.txt")
 
     fun addRoundKey(matrix:Array<IntArray>, key:IntArray):Array<IntArray> {
         for (i in 0..15) {
@@ -40,7 +41,7 @@ class CryptUtils {
         return matrix
     }
 
-    fun padHex(number:String, amount:Int) :String {
+    private fun padHex(number:String, amount:Int) :String {
         return "0".repeat(amount-number.length)+number
     }
 
@@ -60,10 +61,10 @@ class CryptUtils {
         return matrix
     }
 
-    fun xTime(a:Int):Int {
+    private fun xTime(a:Int):Int {
         var t = a shl 1
 
-        if ("80".toInt(16) and t != 0){
+        if ("80".toInt(16) and a != 0){
            t = t xor "1b".toInt(16)
         }
 
@@ -80,19 +81,19 @@ class CryptUtils {
         return matrix
     }
 
-    fun matrixMultiply(vector:IntArray, matrix:Array<IntArray>):IntArray {
+    private fun matrixMultiply(vector:IntArray, matrix:Array<IntArray>):IntArray {
         val resultVector = IntArray(matrix.size)
         //todo: not sure if this works
         for(i in matrix.indices) {
-            //resultVector[i] = (multiply(matrix[i][0],vector[0]) xor multiply(matrix[i][1],vector[1])) xor (multiply(matrix[i][2],vector[2]) xor multiply(matrix[i][3],vector[3]))
-            for (j in matrix.indices) {
-                resultVector[i] = resultVector[i] xor multiply(matrix[i][j], vector[i])
-            }
+            resultVector[i] = (multiply(matrix[i][0],vector[0]) xor multiply(matrix[i][1],vector[1])) xor (multiply(matrix[i][2],vector[2]) xor multiply(matrix[i][3],vector[3]))
+            //for (j in matrix.indices) {
+              //  resultVector[i] = resultVector[i] xor multiply(matrix[i][j], vector[i])
+            //}
         }
         return resultVector
     }
 
-    fun multiply(a:Int, b:Int):Int {
+    private fun multiply(a:Int, b:Int):Int {
         var aNum = a
         var bNum = b
         var sum = 0
@@ -103,6 +104,7 @@ class CryptUtils {
             }
             bNum = xTime(bNum)
             aNum = aNum shr 1
+
         }
 
         return sum
@@ -110,13 +112,15 @@ class CryptUtils {
 
 
     fun getMatrixAsHexString(matrix: Array<IntArray>):String {
-        var hexString = ""
-        for (row in matrix) {
-            for (value in row) {
-                hexString += value.toString(16)
-            }
+        return getMatrixAsIntArray(matrix).joinToString("") { padHex(it.toString(16), 2) }
+    }
+
+    fun getMatrixAsIntArray(matrix: Array<IntArray>):IntArray {
+        val array = IntArray(16)
+        for (i in 0 until 16) {
+            array[i] = matrix[i%4][i/4]
         }
-        return hexString
+        return array
     }
 
     fun printMatrix(matrix: Array<IntArray>) {
@@ -127,28 +131,36 @@ class CryptUtils {
         println()
     }
 
-    fun expandKeys(keys:IntArray, sBox:Array<IntArray>):IntArray {
-        val roundKeys = IntArray(44)
+    fun expandKey(k:IntArray):Array<IntArray> {
+        val w = IntArray(44)
         for (i in 0..43) {
             if (i<4) {
-                roundKeys[i] = keys[i]
+                w[i] = k[i]
             } else if(i >= 4 && i % 4 == 0) {
-                roundKeys[i] = keys[i-4] xor rcon(i/4,sBox) xor subWord(rotWord(roundKeys[i-1]),sBox)
+                w[i] = w[i-4] xor rcon(i/4) xor subWord(rotWord(w[i-1]))
             } else {
-                roundKeys[i] = roundKeys[i-4] xor roundKeys[i-1]
+                w[i] = w[i-4] xor w[i-1]
             }
         }
-        return roundKeys
+
+
+        val wordArrays = chunkText(w,4)
+        for (i in wordArrays.indices) {
+            val keyAsBytes = mutableListOf<Int>()
+            for (word in wordArrays[i]) {
+                keyAsBytes.addAll(getBytes(word).toMutableList())
+            }
+            wordArrays[i]= keyAsBytes.toIntArray()
+        }
+        return wordArrays
     }
 
-    fun rcon(i:Int,sBox: Array<IntArray>):Int {
-        val iAsHex = padHex(i.toString(16),2)
-        val firstByte = iAsHex.substring(0,1).toInt(16)
-        val secondByte = iAsHex.substring(1).toInt(16)
-        return (padHex(sBox[firstByte][secondByte].toString(16),2) + "000000").toInt(16)
+    private fun rcon(i:Int):Int {
+        val rci = intArrayOf("01".toInt(16),"02".toInt(16),"04".toInt(16),"08".toInt(16),"10".toInt(16),"20".toInt(16),"40".toInt(16),"80".toInt(16),"1b".toInt(16),"36".toInt(16))
+        return rci[i-1] shl 24
     }
 
-    fun subWord(word:Int,sBox: Array<IntArray>):Int {
+    private fun subWord(word:Int):Int {
         var wordString = ""
         for (byte in getBytes(word)) {
             val byteAsHex = padHex(byte.toString(16),2)
@@ -156,28 +168,52 @@ class CryptUtils {
             val secondByte = byteAsHex.substring(1).toInt(16)
             wordString += padHex(sBox[firstByte][secondByte].toString(16),2)
         }
-        return wordString.toInt(16)
+        return wordString.toUInt(16).toInt()
     }
 
-    fun getBytes(word: Int):IntArray {
-        val bitMask = "FF000000".toInt(16)
+    private fun getBytes(word: Int):IntArray {
+        val mask:UInt = "FF000000".toUInt(16)
         val bytes = IntArray(4)
-        for (i in bytes.indices) {
-            bytes[i] = (word and (bitMask ushr (2*i))) ushr 2*(3-i)
+        for (i in 0..3) {
+            bytes[i] = ((word.toUInt() and (mask shr (8*i))) shr ((3-i)*8)).toInt()
         }
         return bytes
     }
 
-    fun getWord(bytes:IntArray):Int {
-        return bytes.joinToString("") { padHex(it.toString(16), 2) }.toInt(16)
+    private fun getWord(bytes:IntArray):Int {
+        return bytes.map { padHex(it.toString(16),2) }.joinToString("").toUInt(16).toInt()
+    }
+    fun getKeyAsWords(keyAsBytes:IntArray):IntArray {
+        val words = IntArray(keyAsBytes.size/4)
+        for (i in 0 until (keyAsBytes.size/4)) {
+            words[i] = getWord(keyAsBytes.copyOfRange(i*4,(i+1)*4))
+        }
+        return words
     }
 
-    fun rotWord(word:Int):Int {
+    private fun rotWord(word:Int):Int {
         val bytes = getBytes(word).toMutableList()
-        Collections.rotate(bytes,1)
+        Collections.rotate(bytes,3)
         return getWord(bytes.toIntArray())
     }
 
+    fun chunkText(text:IntArray,size:Int):Array<IntArray> {
+        val list: MutableList<IntArray> = mutableListOf()
+        for (i in 1..(text.size/size)) {
+            list += text.copyOfRange((i-1)*size,i*size)
+        }
+        val remainder = text.size%size
+
+        if (remainder != 0) {
+            val lastList: MutableList<Int> = text.copyOfRange(text.size-remainder,text.size).toMutableList()
+            for (i in remainder until size) {
+                lastList +=0
+            }
+            list += lastList.toIntArray()
+        }
+
+        return list.toTypedArray()
+    }
 
 
 }
