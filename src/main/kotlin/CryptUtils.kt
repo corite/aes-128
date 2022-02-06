@@ -2,6 +2,7 @@ import java.io.File
 import java.util.*
 
 class CryptUtils {
+    private val filePrefix = "src"+File.separator+"main"+File.separator+"resources"+File.separator
     private val sBox = readSBox(filePrefix+"SBox.txt")
 
     fun addRoundKey(matrix:Array<IntArray>, key:IntArray):Array<IntArray> {

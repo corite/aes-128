@@ -2,10 +2,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.5.31"
-    application
+    `java-library`
+    `maven-publish`
 }
 
-group = "me.corit"
+group = "me.corite"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -21,9 +22,20 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
-application {
-    mainClass.set("MainKt")
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "me.corite"
+            artifactId = "aes-128"
+            version = "1.0"
+
+            from(components["java"])
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
 }
