@@ -3,9 +3,8 @@ import java.io.File
 class EncryptionHandler {
     private val cryptHandler = CryptUtils()
     private val mixColumnMatrix:Array<IntArray> = arrayOf(intArrayOf(2,3,1,1), intArrayOf(1,2,3,1), intArrayOf(1,1,2,3), intArrayOf(3,1,1,2))
-    private val filePrefix = "src"+ File.separator+"main"+ File.separator+"resources"+File.separator
 
-    private val sBox = cryptHandler.readSBox(filePrefix+"SBox.txt")
+    private val sBox = CryptUtils.sBox
 
 
     fun encryptChunk(textToEncrypt:IntArray,keys:Array<IntArray>):IntArray {
