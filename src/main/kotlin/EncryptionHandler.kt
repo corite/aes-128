@@ -1,13 +1,15 @@
+@file:OptIn(ExperimentalUnsignedTypes::class, ExperimentalUnsignedTypes::class)
+
 import CryptUtils.Constants.xor
 
 class EncryptionHandler {
     private val cryptHandler = CryptUtils()
-    private val mixColumnMatrix:Array<IntArray> = arrayOf(intArrayOf(2,3,1,1), intArrayOf(1,2,3,1), intArrayOf(1,1,2,3), intArrayOf(3,1,1,2))
+    private val mixColumnMatrix:Array<UByteArray> = arrayOf(ubyteArrayOf(2u,3u,1u,1u), ubyteArrayOf(1u,2u,3u,1u), ubyteArrayOf(1u,1u,2u,3u), ubyteArrayOf(3u,1u,1u,2u))
 
     private val sBox = CryptUtils.sBox
 
 
-    fun encryptChunk(textToEncrypt:IntArray, keys:Array<IntArray>):IntArray {
+    fun encryptChunk(textToEncrypt:UByteArray, keys:Array<UByteArray>):UByteArray {
 
         var textMatrix = cryptHandler.getAsMatrix(textToEncrypt)
 
@@ -30,7 +32,7 @@ class EncryptionHandler {
         return cryptHandler.getMatrixAsIntArray(textMatrix)
     }
 
-    fun encrypt(text: IntArray, keyAsBytes: IntArray, mode: CipherMode):IntArray {
+    fun encrypt(text: UByteArray, keyAsBytes: UByteArray, mode: CipherMode):UByteArray {
         val key = cryptHandler.getKeyAsWords(keyAsBytes)
         val keys = cryptHandler.expandKey(key)
         val chunkedTexts = cryptHandler.chunkText(text,16)
@@ -40,9 +42,9 @@ class EncryptionHandler {
         }
     }
 
-    private fun encryptCBC(chunkedTexts:Array<IntArray>, keys:Array<IntArray>):IntArray {
-        val encryptedText = IntArray(chunkedTexts.size * 16)
-        var lastEncBlock = IntArray(16)
+    private fun encryptCBC(chunkedTexts:Array<UByteArray>, keys:Array<UByteArray>):UByteArray {
+        val encryptedText = UByteArray(chunkedTexts.size * 16)
+        var lastEncBlock = UByteArray(16)
 
         for (i in chunkedTexts.indices) {
             val encryptedChunk = encryptChunk(chunkedTexts[i] xor lastEncBlock, keys)
@@ -55,8 +57,8 @@ class EncryptionHandler {
         return encryptedText
     }
 
-    private fun encryptECB(chunkedTexts:Array<IntArray>, keys:Array<IntArray>):IntArray {
-        val encryptedText = IntArray(chunkedTexts.size * 16)
+    private fun encryptECB(chunkedTexts:Array<UByteArray>, keys:Array<UByteArray>):UByteArray {
+        val encryptedText = UByteArray(chunkedTexts.size * 16)
 
         for (i in chunkedTexts.indices) {
             val encryptedChunk = encryptChunk(chunkedTexts[i],keys)

@@ -1,15 +1,17 @@
+@file:OptIn(ExperimentalUnsignedTypes::class)
+
 import CryptUtils.Constants.xor
 
 class DecryptionHandler {
     private val cryptHandler = CryptUtils()
-    private val reverseMixColumnMatrix:Array<IntArray> = arrayOf(
-        intArrayOf("E".toInt(16),"B".toInt(16),"D".toInt(16),9)
-        ,intArrayOf(9,"E".toInt(16),"B".toInt(16),"D".toInt(16))
-        ,intArrayOf("D".toInt(16),9,"E".toInt(16),"B".toInt(16))
-        ,intArrayOf("B".toInt(16),"D".toInt(16),9,"E".toInt(16)))
+    private val reverseMixColumnMatrix:Array<UByteArray> = arrayOf(
+        ubyteArrayOf("E".toUByte(16),"B".toUByte(16),"D".toUByte(16), 9u)
+        ,ubyteArrayOf(9u,"E".toUByte(16),"B".toUByte(16),"D".toUByte(16))
+        ,ubyteArrayOf("D".toUByte(16),9u,"E".toUByte(16),"B".toUByte(16))
+        ,ubyteArrayOf("B".toUByte(16),"D".toUByte(16),9u,"E".toUByte(16)))
     private val sBoxInv = CryptUtils.sBoxInverse
 
-    fun decryptChunk(textToEncrypt:IntArray,keys:Array<IntArray>):IntArray {
+    fun decryptChunk(textToEncrypt:UByteArray,keys:Array<UByteArray>):UByteArray {
         var textMatrix = cryptHandler.getAsMatrix(textToEncrypt)
 
         textMatrix = cryptHandler.addRoundKey(textMatrix,keys[10])
@@ -28,7 +30,7 @@ class DecryptionHandler {
         return cryptHandler.getMatrixAsIntArray(textMatrix)
     }
 
-    fun decrypt(text: IntArray, keyAsBytes: IntArray, mode: CipherMode):IntArray {
+    fun decrypt(text: UByteArray, keyAsBytes: UByteArray, mode: CipherMode):UByteArray {
         val key = cryptHandler.getKeyAsWords(keyAsBytes)
         val keys =cryptHandler.expandKey(key)
         val chunkedTexts = cryptHandler.chunkText(text,16)
@@ -39,9 +41,9 @@ class DecryptionHandler {
         }
     }
 
-    private fun decryptCBC(chunkedTexts:Array<IntArray>, keys:Array<IntArray>):IntArray {
-        val decryptedText = IntArray(chunkedTexts.size * 16)
-        var lastDecBlock = IntArray(16)
+    private fun decryptCBC(chunkedTexts:Array<UByteArray>, keys:Array<UByteArray>):UByteArray {
+        val decryptedText = UByteArray(chunkedTexts.size * 16)
+        var lastDecBlock = UByteArray(16)
 
         for (i in chunkedTexts.indices) {
             val decryptedChunk = decryptChunk(chunkedTexts[i], keys) xor lastDecBlock
@@ -54,8 +56,8 @@ class DecryptionHandler {
         return decryptedText
     }
 
-    private fun decryptECB(chunkedTexts:Array<IntArray>, keys:Array<IntArray>):IntArray {
-        val decryptedText = IntArray(chunkedTexts.size * 16)
+    private fun decryptECB(chunkedTexts:Array<UByteArray>, keys:Array<UByteArray>):UByteArray {
+        val decryptedText = UByteArray(chunkedTexts.size * 16)
 
         for (i in chunkedTexts.indices) {
             val decryptedChunk = decryptChunk(chunkedTexts[i],keys)
