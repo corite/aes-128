@@ -9,7 +9,7 @@ class DecryptionHandler {
         ,intArrayOf("B".toInt(16),"D".toInt(16),9,"E".toInt(16)))
     private val sBoxInv = CryptUtils.sBoxInverse
 
-    private fun decryptChunk(textToEncrypt:IntArray,keys:Array<IntArray>):IntArray {
+    fun decryptChunk(textToEncrypt:IntArray,keys:Array<IntArray>):IntArray {
         var textMatrix = cryptHandler.getAsMatrix(textToEncrypt)
 
         textMatrix = cryptHandler.addRoundKey(textMatrix,keys[10])

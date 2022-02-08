@@ -7,7 +7,7 @@ class EncryptionHandler {
     private val sBox = CryptUtils.sBox
 
 
-    private fun encryptChunk(textToEncrypt:IntArray, keys:Array<IntArray>):IntArray {
+    fun encryptChunk(textToEncrypt:IntArray, keys:Array<IntArray>):IntArray {
 
         var textMatrix = cryptHandler.getAsMatrix(textToEncrypt)
 
