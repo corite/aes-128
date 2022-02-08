@@ -1,4 +1,4 @@
-import java.io.File
+import CryptUtils.Constants.xor
 
 class EncryptionHandler {
     private val cryptHandler = CryptUtils()
@@ -7,7 +7,7 @@ class EncryptionHandler {
     private val sBox = CryptUtils.sBox
 
 
-    fun encryptChunk(textToEncrypt:IntArray,keys:Array<IntArray>):IntArray {
+    private fun encryptChunk(textToEncrypt:IntArray, keys:Array<IntArray>):IntArray {
 
         var textMatrix = cryptHandler.getAsMatrix(textToEncrypt)
 
@@ -30,10 +30,32 @@ class EncryptionHandler {
         return cryptHandler.getMatrixAsIntArray(textMatrix)
     }
 
-    fun encrypt(text: IntArray, keyAsBytes: IntArray):IntArray {
+    fun encrypt(text: IntArray, keyAsBytes: IntArray, mode: CipherMode):IntArray {
         val key = cryptHandler.getKeyAsWords(keyAsBytes)
-        val keys =cryptHandler.expandKey(key)
+        val keys = cryptHandler.expandKey(key)
         val chunkedTexts = cryptHandler.chunkText(text,16)
+        return when(mode) {
+            CipherMode.ECB -> encryptECB(chunkedTexts, keys)
+            CipherMode.CBC -> encryptCBC(chunkedTexts, keys)
+        }
+    }
+
+    private fun encryptCBC(chunkedTexts:Array<IntArray>, keys:Array<IntArray>):IntArray {
+        val encryptedText = IntArray(chunkedTexts.size * 16)
+        var lastEncBlock = IntArray(16)
+
+        for (i in chunkedTexts.indices) {
+            val encryptedChunk = encryptChunk(chunkedTexts[i] xor lastEncBlock, keys)
+            //copying the result into the output array
+            for (j in encryptedChunk.indices) {
+                encryptedText[(i*16)+j] = encryptedChunk[j]
+            }
+            lastEncBlock = encryptedChunk
+        }
+        return encryptedText
+    }
+
+    private fun encryptECB(chunkedTexts:Array<IntArray>, keys:Array<IntArray>):IntArray {
         val encryptedText = IntArray(chunkedTexts.size * 16)
 
         for (i in chunkedTexts.indices) {

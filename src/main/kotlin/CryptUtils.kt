@@ -1,3 +1,4 @@
+import java.lang.IllegalArgumentException
 import java.util.*
 
 class CryptUtils {
@@ -46,6 +47,15 @@ class CryptUtils {
                 matrix[i] = hexValues.toIntArray()
             }
             return matrix
+        }
+        infix fun IntArray.xor(other:IntArray):IntArray {
+            if (this.size == other.size) {
+                val output = IntArray(this.size)
+                for (i in output.indices) {
+                    output[i] = this[i] xor other[i]
+                }
+                return output
+            } else throw IllegalArgumentException()
         }
     }
 
@@ -213,7 +223,7 @@ class CryptUtils {
     }
 
     private fun getWord(bytes:IntArray):Int {
-        return bytes.map { padHex(it.toString(16),2) }.joinToString("").toUInt(16).toInt()
+        return bytes.joinToString("") { padHex(it.toString(16), 2) }.toUInt(16).toInt()
     }
     fun getKeyAsWords(keyAsBytes:IntArray):IntArray {
         val words = IntArray(keyAsBytes.size/4)
@@ -246,4 +256,6 @@ class CryptUtils {
 
         return list.toTypedArray()
     }
+
+
 }
