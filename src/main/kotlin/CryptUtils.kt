@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
 import java.lang.IllegalArgumentException
+import java.math.BigInteger
 import java.util.*
 
 class CryptUtils {
@@ -58,6 +59,10 @@ class CryptUtils {
                 }
                 return output
             } else throw IllegalArgumentException()
+        }
+        fun BigInteger.to16UByteArray():UByteArray {
+            val filledBytes = this.toByteArray().toUByteArray()
+            return UByteArray(16-filledBytes.size) +filledBytes
         }
     }
 
@@ -277,6 +282,11 @@ class CryptUtils {
         }
 
         return list.toTypedArray()
+    }
+    fun getCtr(nonce:ULong):ULong {
+        val leadingZeros = nonce.countLeadingZeroBits()
+        return  nonce shl leadingZeros
+        //shifts the number so that the first bit is always 1 (as long as the number doesn't equal 0)
     }
 
 
