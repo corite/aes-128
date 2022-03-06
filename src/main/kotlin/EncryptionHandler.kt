@@ -79,7 +79,7 @@ class EncryptionHandler {
         val encryptedText = UByteArray(chunkedTexts.size * 16)
         val ctr = cryptHandler.getCtr(nonce)
         for (i in chunkedTexts.indices) {
-            val n = (BigInteger(ctr.toString())+BigInteger.valueOf(i.toLong())) % BigInteger("128")
+            val n = (BigInteger(ctr.toString())+BigInteger.valueOf(i.toLong())) % BigInteger.valueOf(2).pow(128)
             val encryptedN = encryptChunk(n.to16UByteArray(),keys)
             val encryptedChunk = encryptedN xor chunkedTexts[i]
             for (j in encryptedChunk.indices) {
