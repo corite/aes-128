@@ -288,6 +288,4 @@ class CryptUtils {
         return  nonce shl leadingZeros
         //shifts the number so that the first bit is always 1 (as long as the number doesn't equal 0)
     }
-
-
 }

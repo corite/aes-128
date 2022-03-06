@@ -69,22 +69,4 @@ class DecryptionHandler {
         }
         return decryptedText
     }
-
-    fun decryptCTR(text: UByteArray, keyAsBytes: UByteArray, nonce:ULong):UByteArray {
-        val key = cryptHandler.getKeyAsWords(keyAsBytes)
-        val keys = cryptHandler.expandKey(key)
-        val chunkedTexts = cryptHandler.chunkText(text,16)
-
-        val decryptedText = UByteArray(chunkedTexts.size * 16)
-        val ctr = cryptHandler.getCtr(nonce)
-        for (i in chunkedTexts.indices) {
-            val n = (BigInteger(ctr.toString())+ BigInteger.valueOf(i.toLong())) % BigInteger.valueOf(2).pow(128)
-            val decryptedN = decryptChunk(n.to16UByteArray(),keys)
-            val decryptedChunk = decryptedN xor chunkedTexts[i]
-            for (j in decryptedChunk.indices) {
-                decryptedText[(i*16)+j] = decryptedChunk[j]
-            }
-        }
-        return decryptedText
-    }
 }

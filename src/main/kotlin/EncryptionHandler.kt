@@ -71,7 +71,7 @@ class EncryptionHandler {
         return encryptedText
     }
 
-    fun encryptCTR(text: UByteArray, keyAsBytes: UByteArray, nonce:ULong):UByteArray {
+    fun cryptCTR(text: UByteArray, keyAsBytes: UByteArray, nonce:ULong):UByteArray {
         val key = cryptHandler.getKeyAsWords(keyAsBytes)
         val keys = cryptHandler.expandKey(key)
         val chunkedTexts = cryptHandler.chunkText(text,16)
