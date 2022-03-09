@@ -1,8 +1,6 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-import CryptUtils.Constants.to16UByteArray
 import CryptUtils.Constants.xor
-import java.math.BigInteger
 
 class DecryptionHandler {
     private val cryptHandler = CryptUtils()
@@ -29,7 +27,7 @@ class DecryptionHandler {
 
         textMatrix = cryptHandler.addRoundKey(textMatrix,keys[0])
 
-        return cryptHandler.getMatrixAsIntArray(textMatrix)
+        return cryptHandler.getMatrixAsUByteArray(textMatrix)
     }
 
     fun decrypt(text: UByteArray, keyAsBytes: UByteArray, mode: CipherMode):UByteArray {

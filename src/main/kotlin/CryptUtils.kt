@@ -47,7 +47,8 @@ class CryptUtils {
             val lines = matrixAsString.split("\n")
             for (i in lines.indices) {
                 val hexValues = lines[i].split(", ").map { it.substring(2) }.map { it.toUByte(16) }
-                matrix[i] = hexValues.toUByteArray()
+                //              split into single hex numbers       remove '0x' prefix                  interpret as Hex-Number
+                matrix[i] = hexValues.toUByteArray()// save this row
             }
             return matrix
         }
@@ -69,6 +70,7 @@ class CryptUtils {
     fun addRoundKey(matrix:Array<UByteArray>, key:UByteArray):Array<UByteArray> {
         for (i in 0..15) {
             matrix[i%4][i/4] = matrix[i%4][i/4] xor key[i]
+            // going through the matrix column by column
         }
         return matrix
     }
@@ -81,8 +83,6 @@ class CryptUtils {
         }
         return matrix
     }
-
-
 
     fun subBytes(matrix:Array<UByteArray>, sBox:Array<UByteArray>):Array<UByteArray> {
         for (i in 0..3) {
@@ -103,7 +103,7 @@ class CryptUtils {
     fun shiftRowsLeft(matrix:Array<UByteArray>):Array<UByteArray> {
         for (i in 0..3) {
             val line = matrix[i]
-            matrix[i] = line.mapIndexed { index, _ -> line[ (index+i+line.size) % line.size ] }.toUByteArray()
+            matrix[i] = List(matrix[i].size) { index -> line[ (index+i+line.size) % line.size ] }.toUByteArray()
         }
         return matrix
     }
@@ -111,7 +111,7 @@ class CryptUtils {
     fun shiftRowsRight(matrix:Array<UByteArray>):Array<UByteArray> {
         for (i in 0..3) {
             val line = matrix[i]
-            matrix[i] = line.mapIndexed { index, _ -> line[ (index-i+line.size) % line.size ] }.toUByteArray()
+            matrix[i] = List(matrix[i].size) { index -> line[ (index-i+line.size) % line.size ] }.toUByteArray()
         }
         return matrix
     }
@@ -130,9 +130,9 @@ class CryptUtils {
 
     fun mixColumns(matrix:Array<UByteArray>, mcMatrix:Array<UByteArray>):Array<UByteArray> {
         for (i in 0..3) {
-            var column = matrix.map { it[i] }.toUByteArray()
+            var column = matrix.map { it[i] }.toUByteArray() //extract column
             column = matrixMultiply(column, mcMatrix)
-            matrix.forEachIndexed { index, it -> it[i] = column[index] }
+            matrix.forEachIndexed { index, it -> it[i] = column[index] } //re-insert column
         }
         return matrix
     }
@@ -163,7 +163,7 @@ class CryptUtils {
         return sum
     }
 
-    fun getMatrixAsIntArray(matrix: Array<UByteArray>):UByteArray {
+    fun getMatrixAsUByteArray(matrix: Array<UByteArray>):UByteArray {
         val array = UByteArray(16)
         for (i in 0 until 16) {
             array[i] = matrix[i%4][i/4]
@@ -192,7 +192,7 @@ class CryptUtils {
         }
 
 
-        val wordArrays = chunkText(w,4)
+        val wordArrays = chunkText(w,4) // group into words
         val uByteArrays = Array(11) { UByteArray(16) }
         for (i in wordArrays.indices) {
             //convert words to bytes
@@ -217,6 +217,7 @@ class CryptUtils {
             val firstByte = byteAsHex.substring(0,1).toInt(16)
             val secondByte = byteAsHex.substring(1).toInt(16)
             wordString += padHex(sBox[firstByte][secondByte].toString(16),2)
+            //sub evey byte and concat as hex string
         }
         return wordString.toUInt(16).toInt()
     }
@@ -245,10 +246,11 @@ class CryptUtils {
     private fun rotWord(word:Int):Int {
         val bytes = getBytes(word).toMutableList()
         Collections.rotate(bytes,3)
+        //rotate 1 to the left
         return getWord(bytes.toUByteArray())
     }
 
-    private fun chunkText(text:IntArray,size:Int):Array<IntArray> {
+    private fun chunkText(text:IntArray, size:Int):Array<IntArray> {
         val list: MutableList<IntArray> = mutableListOf()
         for (i in 1..(text.size/size)) {
             list += text.copyOfRange((i-1)*size,i*size)
@@ -256,6 +258,7 @@ class CryptUtils {
         val remainder = text.size % size
 
         if (remainder != 0) {
+            //pad with zeros if necessary
             val lastList: MutableList<Int> = text.copyOfRange(text.size-remainder,text.size).toMutableList()
             for (i in remainder until size) {
                 lastList += 0
@@ -274,6 +277,7 @@ class CryptUtils {
         val remainder = text.size % size
 
         if (remainder != 0) {
+            //pad with zeros if necessary
             val lastList: MutableList<UByte> = text.copyOfRange(text.size-remainder,text.size).toMutableList()
             for (i in remainder until size) {
                 lastList += 0u
@@ -285,7 +289,7 @@ class CryptUtils {
     }
     fun getCtr(nonce:ULong):ULong {
         val leadingZeros = nonce.countLeadingZeroBits()
-        return  nonce shl leadingZeros
+        return nonce shl leadingZeros
         //shifts the number so that the first bit is always 1 (as long as the number doesn't equal 0)
     }
 }

@@ -31,7 +31,7 @@ class EncryptionHandler {
         textMatrix = cryptHandler.shiftRowsLeft(textMatrix)
         textMatrix = cryptHandler.addRoundKey(textMatrix,keys[10])
 
-        return cryptHandler.getMatrixAsIntArray(textMatrix)
+        return cryptHandler.getMatrixAsUByteArray(textMatrix)
     }
 
     fun encrypt(text: UByteArray, keyAsBytes: UByteArray, mode: CipherMode):UByteArray {
